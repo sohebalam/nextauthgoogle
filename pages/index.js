@@ -1,5 +1,6 @@
 import styles from "../styles/Home.module.css"
 import { getSession, signIn, signOut } from "next-auth/client"
+import SocialLogin from "../components/SocialLogin"
 
 export default function Home({ session }) {
   console.log(session)
@@ -17,6 +18,7 @@ export default function Home({ session }) {
           <img src={session.user.image} alt={session.user.name} />
         </div>
       )}
+      <SocialLogin />
     </div>
   )
 }

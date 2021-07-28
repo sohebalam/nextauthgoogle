@@ -102,7 +102,7 @@ const Header = () => {
                     <Button
                       color="inherit"
                       style={{ marginRight: "0.5rem" }}
-                      onClick={() => signOut()}
+                      onClick={handleSignout}
                     >
                       <ExitToAppIcon style={{ marginRight: "0.25rem" }} />
                       LogOut

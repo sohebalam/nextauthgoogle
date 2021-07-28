@@ -9,10 +9,23 @@ export default NextAuth({
     jwt: true,
   },
   providers: [
+    Providers.Facebook({
+      clientId: process.env.FACEBOOK_ID,
+      clientSecret: process.env.FACEBOOK_SECRET,
+    }),
     Providers.Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
+    Providers.GitHub({
+      clientId: process.env.GITHUB_ID,
+      clientSecret: process.env.GITHUB_SECRET,
+    }),
+    Providers.Twitter({
+      clientId: process.env.TWITTER_ID,
+      clientSecret: process.env.TWITTER_SECRET,
+    }),
+
     Providers.Credentials({
       async authorize(credentials) {
         connectDB()
@@ -41,6 +54,9 @@ export default NextAuth({
       },
     }),
   ],
+  pages: {
+    signIn: "/signin",
+  },
   callbacks: {
     jwt: async (token, user) => {
       user && (token.user = user)

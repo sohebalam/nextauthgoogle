@@ -9,12 +9,11 @@ import ExitToAppIcon from "@material-ui/icons/ExitToApp"
 // import AdminMenu from "./Menu"
 
 import { loadUser } from "../redux/userActions"
-import { signOut, useSession, signIn } from "next-auth/client"
+import { signOut, useSession } from "next-auth/client"
 import {
   AppBar,
   Toolbar,
   IconButton,
-  div,
   Typography,
   Button,
 } from "@material-ui/core"
@@ -40,19 +39,11 @@ const Header = () => {
 
   const [session] = useSession()
 
-  // console.log(session)
-
-  const { user, loading } = useSelector((state) => state.profile)
-
-  // console.log(user)
-
-  // if (session) {
-  //   const { user } = session
-  //   console.log(user)
-  // }
+  const profile = useSelector((state) => state.profile)
+  const { loading, error, dbUser } = profile
 
   useEffect(() => {
-    if (!user) {
+    if (!dbUser) {
       dispatch(loadUser())
     }
   }, [])
@@ -77,10 +68,10 @@ const Header = () => {
             </Typography>
 
             <>
-              {user ? (
+              {dbUser ? (
                 <>
                   <div style={{ marginTop: "0.25rem" }}>
-                    <Link style={{ color: "white" }} href="/profile/profile">
+                    <Link style={{ color: "white" }} href="/dbUser/profile">
                       <Button color="inherit" style={{ marginRight: "0.5rem" }}>
                         Profile
                       </Button>
@@ -96,11 +87,11 @@ const Header = () => {
                   >
                     <Typography style={{ marginTop: "0.25rem" }}>
                       {" "}
-                      Hello {user.name}
-                      {/* {user.lastName} */}
+                      Hello {dbUser.name}
+                      {/* {dbUser.lastName} */}
                     </Typography>
                   </div>
-                  {/* {user?.isAdmin && <AdminMenu />} */}
+                  {/* {dbUser?.isAdmin && <AdminMenu />} */}
                   <div style={{ marginTop: "0.25rem" }}>
                     <Button
                       color="inherit"
@@ -114,13 +105,13 @@ const Header = () => {
                 </>
               ) : (
                 <>
-                  <Link href="/user/register">
+                  <Link href="/dbUser/register">
                     <Button color="inherit">
                       <AssignmentIcon style={{ marginRight: "0.25rem" }} />
                       Register
                     </Button>
                   </Link>
-                  <Link href="/user/login">
+                  <Link href="/dbUser/login">
                     <Button color="inherit">
                       <PersonIcon style={{ marginRight: "0.25rem" }} />
                       Login

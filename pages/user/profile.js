@@ -63,8 +63,8 @@ const Profile = () => {
   useEffect(() => {
     if (dbUser) {
       setUser({
-        name: dbUser.dbUser.name,
-        email: dbUser.dbUser.email,
+        name: dbUser.name,
+        email: dbUser.email,
       })
     }
 

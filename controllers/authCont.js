@@ -50,17 +50,11 @@ export const currentUserProfile = catchAsyncErrors(async (req, res) => {
 
   if (req.user.id) {
     const dbUser = await User.findOne({ socialId: req.user.id })
-    res.status(200).json({
-      success: true,
-      dbUser,
-    })
+    res.status(200).send(dbUser)
   } else {
     const dbUser = await User.findById(req.user._id)
 
-    res.status(200).json({
-      success: true,
-      dbUser,
-    })
+    res.status(200).send(dbUser)
   }
 })
 
@@ -69,14 +63,25 @@ export const updateProfile = async (req, res) => {
 
   if (req.user.id) {
     const user = await User.findOne({ socialId: req.user.id })
+
     if (user) {
-      ;(user.name = req.body.name), (user.email = req.body.email)
+      user.name = req.body.name
 
       if (req.body.password) {
         const salt = await bcrypt.genSalt(12)
         user.password = await bcrypt.hash(req.body.password, salt)
       }
     }
+    // if (user.email) {
+    //   const { email } = user
+    //   const userExists = await User.findOne({ email })
+
+    //   if (userExists) {
+    //     return res.status(400).json({ message: "email aleady exists" })
+    //   }
+    // } else {
+    //   user.email = req.body.email
+    // }
     await user.save()
     res.status(200).json({
       success: true,

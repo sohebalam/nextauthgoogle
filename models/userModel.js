@@ -3,6 +3,7 @@ import mongoose from "mongoose"
 const userSchema = mongoose.Schema({
   socialId: {
     type: String,
+    unique: true,
   },
   name: {
     type: String,
@@ -11,18 +12,18 @@ const userSchema = mongoose.Schema({
   },
   email: {
     type: String,
-    // required: true,
-    unique: true,
-    lowercase: true,
-    // validate: [validator.isEmail, "Please enter valid email"],
-    default: "",
+    required: false, // only required for facebook users
+    index: {
+      unique: true,
+      partialFilterExpression: { email: { $type: "string" } },
+    },
+    default: null,
   },
   password: {
     type: String,
     // required: true,
     // minLength: [6, "Your password must be at least 6 characters"],
     select: false,
-    default: "",
   },
   //   role: {
   //     type: String,

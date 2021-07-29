@@ -13,11 +13,7 @@ import { makeStyles } from "@material-ui/core/styles"
 import Container from "@material-ui/core/Container"
 import { useDispatch, useSelector } from "react-redux"
 import { useRouter } from "next/router"
-import {
-  clearErrors,
-  passwordReset,
-  userRegister,
-} from "../../../redux/userActions"
+import { passwordReset, userRegister } from "../../../redux/userActions"
 import { CircularProgress } from "@material-ui/core"
 import { Alert } from "@material-ui/lab"
 import { getSession } from "next-auth/client"
@@ -61,7 +57,7 @@ const Reset = () => {
     }
     if (error) {
       setUserError(error)
-      dispatch(clearErrors())
+      // dispatch(clearErrors())
     }
   }, [dispatch, success, error])
 

@@ -100,7 +100,7 @@ export const forgotPassword = async (req, res) => {
     console.log(user)
     await user.save()
 
-    const link = `${process.env.API}/reset/${token}`
+    const link = `${process.env.API}/user/reset/${token}`
     // HTML Message
     const message = `
       

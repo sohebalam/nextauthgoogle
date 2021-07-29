@@ -114,8 +114,8 @@ export const resetPasswordReducer = (state = {}, action) => {
       return { loading: false, message: action.payload }
     case RESET_PASSWORD_FAIL:
       return { loading: false, error: action.payload }
-    case CLEAR_ERRORS:
-      return { ...state, error: null }
+    // case CLEAR_ERRORS:
+    //   return { ...state, error: null }
     default:
       return state
   }

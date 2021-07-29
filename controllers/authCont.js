@@ -66,18 +66,34 @@ export const currentUserProfile = catchAsyncErrors(async (req, res) => {
 
 export const updateProfile = async (req, res) => {
   // console.log(req.user._id)
-  const user = await User.findById(req.user._id)
 
-  if (user) {
-    ;(user.name = req.body.name), (user.email = req.body.email)
-    if (req.body.password) {
-      user.password = req.body.password
+  if (req.user.id) {
+    const user = await User.findOne({ socialId: req.user.id })
+    if (user) {
+      ;(user.name = req.body.name), (user.email = req.body.email)
+
+      if (req.body.password) {
+        const salt = await bcrypt.genSalt(12)
+        user.password = await bcrypt.hash(req.body.password, salt)
+      }
     }
+    await user.save()
+    res.status(200).json({
+      success: true,
+    })
+  } else {
+    const user = await User.findById(req.user._id)
+    if (user) {
+      ;(user.name = req.body.name), (user.email = req.body.email)
+      if (req.body.password) {
+        user.password = await bcrypt.hash(req.body.password, salt)
+      }
+    }
+    await user.save()
+    res.status(200).json({
+      success: true,
+    })
   }
-  await user.save()
-  res.status(200).json({
-    success: true,
-  })
 }
 
 export const forgotPassword = async (req, res) => {

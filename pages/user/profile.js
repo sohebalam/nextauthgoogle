@@ -7,12 +7,10 @@ import FormControlLabel from "@material-ui/core/FormControlLabel"
 import Checkbox from "@material-ui/core/Checkbox"
 import Link from "@material-ui/core/Link"
 import Grid from "@material-ui/core/Grid"
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined"
 import Typography from "@material-ui/core/Typography"
 import { makeStyles } from "@material-ui/core/styles"
 import Container from "@material-ui/core/Container"
 import { Alert } from "@material-ui/lab"
-import { getSession } from "next-auth/client"
 import PersonIcon from "@material-ui/icons/Person"
 import React, { useState, useEffect } from "react"
 import { useRouter } from "next/router"
@@ -52,13 +50,10 @@ const Profile = () => {
     password: "",
   })
 
-  const { name, email, password } = user
+  const { dbUser, loading, message } = useSelector((state) => state.profile)
 
-  const {
-    user: loadedUser,
-    loading,
-    message,
-  } = useSelector((state) => state.profile)
+  // console.log(dbUser)
+
   const {
     error,
     isUpdated,
@@ -66,23 +61,23 @@ const Profile = () => {
   } = useSelector((state) => state.update)
 
   useEffect(() => {
-    if (loadedUser) {
+    if (dbUser) {
       setUser({
-        name: loadedUser.name,
-        email: loadedUser.email,
+        name: dbUser.dbUser.name,
+        email: dbUser.dbUser.email,
       })
     }
 
     if (error) {
       console.log(error)
-      dispatch(clearErrors())
+      // dispatch(clearErrors())
     }
 
     if (isUpdated) {
       router.push("/")
       dispatch({ type: UPDATE_PROFILE_RESET })
     }
-  }, [dispatch, isUpdated, loadedUser, error])
+  }, [dispatch, isUpdated, dbUser, error])
 
   const submitHandler = (e) => {
     e.preventDefault()
@@ -99,7 +94,7 @@ const Profile = () => {
   const onChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value })
   }
-
+  const { name, email, password } = user
   return (
     <>
       {loading ? (
@@ -128,7 +123,7 @@ const Profile = () => {
                     id="Name"
                     label="Name"
                     autoFocus
-                    value={name}
+                    value={name || ""}
                     onChange={onChange}
                   />
                 </Grid>
@@ -152,7 +147,7 @@ const Profile = () => {
                     label="Email Address"
                     name="email"
                     autoComplete="email"
-                    value={email}
+                    value={email || ""}
                     onChange={onChange}
                   />
                 </Grid>
@@ -166,7 +161,7 @@ const Profile = () => {
                     type="password"
                     id="password"
                     autoComplete="current-password"
-                    value={password}
+                    value={password || ""}
                     onChange={onChange}
                   />
                 </Grid>

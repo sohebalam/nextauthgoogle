@@ -81,11 +81,11 @@ const SignIn = ({ providers }) => {
       email: user.email,
       password: null,
     }
-    if (!dbUser) {
-      if (user.id) {
-        dispatch(socialReg(userData))
-        console.log(userData)
-      }
+    // if (dbUser === null) {
+    if (user.id) {
+      dispatch(socialReg(userData))
+      console.log(userData)
+      // }
     }
   }
 

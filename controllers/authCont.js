@@ -46,10 +46,10 @@ export const registerUser = catchAsyncErrors(async (req, res) => {
 })
 
 export const currentUserProfile = catchAsyncErrors(async (req, res) => {
-  console.log(req.user.id)
+  // console.log(req.user.id)
 
   if (req.user.id) {
-    const dbUser = await User.findById({ socialId: req.user.id })
+    const dbUser = await User.findOne({ socialId: req.user.id })
     res.status(200).json({
       success: true,
       dbUser,
@@ -170,11 +170,11 @@ export const socialRegister = catchAsyncErrors(async (req, res) => {
   const { name, email, password, id } = req.body
 
   // const userExists = await User.findOne({ socialId: id })
-  const emailExists = await User.findOne({ email })
+  // const emailExists = await User.findOne({ email })
 
-  if (emailExists) {
-    return
-  }
+  // if (emailExists) {
+  //   return
+  // }
 
   if (password) {
     // const salt = await bcrypt.genSalt(12),

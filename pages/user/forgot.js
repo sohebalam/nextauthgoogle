@@ -17,6 +17,7 @@ import { clearErrors, passwordForgot } from "../../redux/userActions"
 import { CircularProgress } from "@material-ui/core"
 import { Alert } from "@material-ui/lab"
 import { getSession } from "next-auth/client"
+
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),

@@ -1,13 +1,23 @@
 import styles from "../styles/Home.module.css"
 import { getSession, signIn, signOut } from "next-auth/client"
-import SocialLogin from "../components/SocialLogin"
+
+// import SocialLogin from "../components/SocialLogin"
+import { useDispatch } from "react-redux"
+import { clearProfile } from "../redux/userActions"
 
 export default function Home({ session }) {
-  console.log(session)
+  const dispatch = useDispatch()
+
+  const handelSignOut = () => {
+    dispatch(clearProfile())
+    signOut()
+  }
+
+  // console.log(session)
   return (
     <div className={styles.container}>
       {session ? (
-        <button onClick={() => signOut()}>Sign out</button>
+        <button onClick={handelSignOut}>Sign out</button>
       ) : (
         <button onClick={() => signIn()}>Sign in</button>
       )}
@@ -18,7 +28,7 @@ export default function Home({ session }) {
           <img src={session.user.image} alt={session.user.name} />
         </div>
       )}
-      <SocialLogin />
+      {/* <SocialLogin /> */}
     </div>
   )
 }

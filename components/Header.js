@@ -46,10 +46,10 @@ const Header = () => {
 
   // console.log(user)
 
-  if (session) {
-    const { user } = session
-    console.log(user)
-  }
+  // if (session) {
+  //   const { user } = session
+  //   console.log(user)
+  // }
 
   useEffect(() => {
     if (!user) {

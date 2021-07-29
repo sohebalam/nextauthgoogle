@@ -1,16 +1,32 @@
 import catchAsyncErrors from "../middlewares/catchAsyncErrors"
 import User from "../models/userModel"
+// import { Social } from "../socialModel"
 
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 import { sendEmail } from "../middlewares/sendMail"
+import validator from "validator"
 
 export const registerUser = catchAsyncErrors(async (req, res) => {
   // console.log(req.body)
 
   const { name, email, password } = req.body
 
-  const userExists = await User.findOneAndReplace({ email })
+  if (!name || !email || !password) {
+    return res.status(400).json({ message: "please fill in all fields" })
+  }
+
+  if (password.length < 6) {
+    return res
+      .status(400)
+      .json({ message: "password must be at least 6 characters" })
+  }
+
+  if (!validator.isEmail) {
+    return res.status(400).json({ message: "Not a valid email" })
+  }
+
+  const userExists = await User.findOne({ email })
 
   if (userExists) {
     return res.status(400).json({ message: "user exists" })
@@ -30,15 +46,26 @@ export const registerUser = catchAsyncErrors(async (req, res) => {
 })
 
 export const currentUserProfile = catchAsyncErrors(async (req, res) => {
-  const user = await User.findById(req.user._id)
-  res.status(200).json({
-    success: true,
-    user,
-  })
+  console.log(req.user.id)
+
+  if (req.user.id) {
+    const dbUser = await User.findById({ socialId: req.user.id })
+    res.status(200).json({
+      success: true,
+      dbUser,
+    })
+  } else {
+    const dbUser = await User.findById(req.user._id)
+
+    res.status(200).json({
+      success: true,
+      dbUser,
+    })
+  }
 })
 
 export const updateProfile = async (req, res) => {
-  console.log(req.user._id)
+  // console.log(req.user._id)
   const user = await User.findById(req.user._id)
 
   if (user) {
@@ -73,7 +100,7 @@ export const forgotPassword = async (req, res) => {
     console.log(user)
     await user.save()
 
-    const link = `${process.env.API}/user/reset/${token}`
+    const link = `${process.env.API}/reset/${token}`
     // HTML Message
     const message = `
       
@@ -136,3 +163,36 @@ export const resetPassword = async (req, res) => {
     throw new Error("Server Error")
   }
 }
+
+export const socialRegister = catchAsyncErrors(async (req, res) => {
+  // console.log(req.body)
+
+  const { name, email, password, id } = req.body
+
+  // const userExists = await User.findOne({ socialId: id })
+  const emailExists = await User.findOne({ email })
+
+  if (emailExists) {
+    return
+  }
+
+  if (password) {
+    // const salt = await bcrypt.genSalt(12),
+    //   setPassword = await bcrypt.hash(password, salt)
+    // console.log(password)
+    var salt = bcrypt.genSaltSync(10)
+    var hashPassword = bcrypt.hashSync(password, salt)
+  }
+
+  const user = await User.create({
+    socialId: id,
+    name,
+    email,
+    password: hashPassword || "",
+  })
+
+  res.status(200).json({
+    success: true,
+    message: "Account Registered successfully",
+  })
+})

@@ -1,12 +1,5 @@
 import React, { useState, useContext, useEffect } from "react"
-import {
-  Grid,
-  Button,
-  Link,
-  CircularProgress,
-  List,
-  Box,
-} from "@material-ui/core"
+import { Grid, Button, Link, CircularProgress } from "@material-ui/core"
 import Avatar from "@material-ui/core/Avatar"
 import CssBaseline from "@material-ui/core/CssBaseline"
 import TextField from "@material-ui/core/TextField"
@@ -18,7 +11,6 @@ import { makeStyles } from "@material-ui/core/styles"
 import Container from "@material-ui/core/Container"
 import { Alert } from "@material-ui/lab"
 import {
-  FacebookLoginButton,
   GoogleLoginButton,
   GithubLoginButton,
   TwitterLoginButton,
@@ -26,6 +18,8 @@ import {
 } from "react-social-login-buttons"
 import TwitterIcon from "@material-ui/icons/Twitter"
 import { providers, signIn, getSession, useSession } from "next-auth/client"
+import { socialReg } from "../../redux/userActions"
+import { useDispatch, useSelector } from "react-redux"
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -52,8 +46,12 @@ const SignIn = ({ providers }) => {
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
-
+  const dispatch = useDispatch()
   const classes = useStyles()
+
+  const profile = useSelector((state) => state.profile)
+
+  const { dbUser } = profile
 
   const submitHandler = async (e) => {
     e.preventDefault()
@@ -68,13 +66,28 @@ const SignIn = ({ providers }) => {
       setError(res.error)
       setLoading(false)
     } else {
-      window.location.href = "/"
+      // window.location.href = "/"
     }
   }
 
   const [session] = useSession()
 
-  console.log(session)
+  if (session) {
+    const { user } = session
+
+    const userData = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      password: null,
+    }
+    if (!dbUser) {
+      if (user.id) {
+        dispatch(socialReg(userData))
+        console.log(userData)
+      }
+    }
+  }
 
   return (
     <>
@@ -95,6 +108,7 @@ const SignIn = ({ providers }) => {
                 Sign in
               </Typography>
               {error && <Alert severity="error">{error}</Alert>}
+              {/* {error && <Alert severity="error">{error}</Alert>} */}
               <form
                 className={classes.form}
                 noValidate

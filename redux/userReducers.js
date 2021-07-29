@@ -12,6 +12,9 @@ import {
   RESET_PASSWORD_FAIL,
   RESET_PASSWORD_REQUEST,
   RESET_PASSWORD_SUCCESS,
+  SOCIAL_REG_FAIL,
+  SOCIAL_REG_REQUEST,
+  SOCIAL_REG_SUCCESS,
   UPDATE_PROFILE_FAIL,
   UPDATE_PROFILE_REQUEST,
   UPDATE_PROFILE_RESET,
@@ -36,6 +39,24 @@ export const registerReducer = (
   }
 }
 
+export const regSocialReducer = (
+  state = { loading: false, user: null },
+  action
+) => {
+  switch (action.type) {
+    case SOCIAL_REG_REQUEST:
+      return { loading: true }
+    case SOCIAL_REG_SUCCESS:
+      return { loading: false, success: true, message: action.payload.message }
+    case SOCIAL_REG_FAIL:
+      return { loading: false, error: action.payload }
+    // case CLEAR_ERRORS:
+    //   return { ...state, error: null }
+    default:
+      return state
+  }
+}
+
 export const profileReducer = (state = { user: null }, action) => {
   switch (action.type) {
     case LOAD_USER_REQUEST:
@@ -46,12 +67,12 @@ export const profileReducer = (state = { user: null }, action) => {
         success: true,
         isAuthenticated: true,
 
-        user: action.payload,
+        dbUser: action.payload,
       }
     case LOAD_USER_FAIL:
       return { loading: false, error: action.payload }
-    case CLEAR_ERRORS:
-      return { ...state, error: null }
+    case UPDATE_PROFILE_RESET:
+      return { ...state, user: null, success: null, isAuthenticated: null }
     default:
       return state
   }
@@ -93,6 +114,8 @@ export const resetPasswordReducer = (state = {}, action) => {
       return { loading: false, message: action.payload }
     case RESET_PASSWORD_FAIL:
       return { loading: false, error: action.payload }
+    case CLEAR_ERRORS:
+      return { ...state, error: null }
     default:
       return state
   }

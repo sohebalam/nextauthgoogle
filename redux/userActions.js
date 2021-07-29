@@ -12,8 +12,12 @@ import {
   RESET_PASSWORD_FAIL,
   RESET_PASSWORD_REQUEST,
   RESET_PASSWORD_SUCCESS,
+  SOCIAL_REG_FAIL,
+  SOCIAL_REG_REQUEST,
+  SOCIAL_REG_SUCCESS,
   UPDATE_PROFILE_FAIL,
   UPDATE_PROFILE_REQUEST,
+  UPDATE_PROFILE_RESET,
   UPDATE_PROFILE_SUCCESS,
 } from "./userTypes"
 import axios from "axios"
@@ -49,6 +53,13 @@ export const clearErrors = () => async (dispatch) => {
     type: CLEAR_ERRORS,
   })
 }
+export const clearProfile = () => async (dispatch) => {
+  dispatch({
+    type: UPDATE_PROFILE_RESET,
+  })
+}
+
+//loadUserProfile
 
 export const loadUser = () => async (dispatch) => {
   try {
@@ -60,7 +71,7 @@ export const loadUser = () => async (dispatch) => {
 
     dispatch({
       type: LOAD_USER_SUCCESS,
-      payload: data.user,
+      payload: data,
     })
   } catch (error) {
     dispatch({
@@ -87,6 +98,10 @@ export const updateProfile = (userData) => async (dispatch) => {
     dispatch({
       type: UPDATE_PROFILE_SUCCESS,
       payload: data.success,
+    })
+    dispatch({
+      type: UPDATE_PROFILE_RESET,
+      payload: null,
     })
   } catch (error) {
     dispatch({
@@ -150,6 +165,34 @@ export const passwordReset = (userData, resetToken) => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: RESET_PASSWORD_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    })
+  }
+}
+
+export const socialReg = (userData) => async (dispatch) => {
+  // console.log(userData)
+  try {
+    dispatch({ type: SOCIAL_REG_REQUEST })
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+
+    const { data } = await axios.post(`/api/auth/social`, userData, config)
+    console.log(data)
+    dispatch({
+      type: SOCIAL_REG_SUCCESS,
+      payload: data,
+    })
+  } catch (error) {
+    dispatch({
+      type: SOCIAL_REG_FAIL,
       payload:
         error.response && error.response.data.message
           ? error.response.data.message

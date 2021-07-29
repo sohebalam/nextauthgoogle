@@ -4,6 +4,7 @@ import {
   forgotPasswordReducer,
   profileReducer,
   registerReducer,
+  regSocialReducer,
   resetPasswordReducer,
   updateProfileReducer,
 } from "./userReducers"
@@ -14,6 +15,7 @@ const reducer = combineReducers({
   update: updateProfileReducer,
   forgotPassword: forgotPasswordReducer,
   resetPassword: resetPasswordReducer,
+  regSocial: regSocialReducer,
 })
 
 export default reducer

@@ -1,7 +1,9 @@
 import mongoose from "mongoose"
-import validator from "validator"
 
 const userSchema = mongoose.Schema({
+  socialId: {
+    type: String,
+  },
   name: {
     type: String,
     required: true,
@@ -9,15 +11,15 @@ const userSchema = mongoose.Schema({
   },
   email: {
     type: String,
-    required: true,
+    // required: true,
     unique: true,
     lowercase: true,
-    validate: [validator.isEmail, "Please enter valid email"],
+    // validate: [validator.isEmail, "Please enter valid email"],
   },
   password: {
     type: String,
-    required: true,
-    minLength: [6, "Your password must be at least 6 characters"],
+    // required: true,
+    // minLength: [6, "Your password must be at least 6 characters"],
     select: false,
   },
   //   role: {

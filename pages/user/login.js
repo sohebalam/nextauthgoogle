@@ -25,7 +25,7 @@ import {
   LinkedInLoginButton,
 } from "react-social-login-buttons"
 import TwitterIcon from "@material-ui/icons/Twitter"
-import { providers, signIn, getSession } from "next-auth/client"
+import { providers, signIn, getSession, useSession } from "next-auth/client"
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -72,9 +72,9 @@ const SignIn = ({ providers }) => {
     }
   }
 
-  const handleClick = () => {
-    alert("Hello!")
-  }
+  const [session] = useSession()
+
+  console.log(session)
 
   return (
     <>
@@ -172,11 +172,11 @@ const SignIn = ({ providers }) => {
               >
                 Social Login
               </Typography>
-              <FacebookLoginButton onClick={() => signIn("facebook")} />
+              {/* <FacebookLoginButton onClick={() => signIn("facebook")} /> */}
               <GoogleLoginButton onClick={() => signIn("google")} />
-              <GithubLoginButton onClick={() => signIn("github")} />
               <TwitterLoginButton onClick={() => signIn("twitter")} />
-              {/* <LinkedInLoginButton onClick={() => signIn("linkedin")} /> */}
+              <LinkedInLoginButton onClick={() => signIn("linkedin")} />
+              <GithubLoginButton onClick={() => signIn("github")} />
             </div>
             {/* </Container> */}
           </Grid>

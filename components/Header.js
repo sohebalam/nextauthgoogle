@@ -8,7 +8,7 @@ import ShoppingCartIcon from "@material-ui/icons/ShoppingCart"
 import ExitToAppIcon from "@material-ui/icons/ExitToApp"
 // import AdminMenu from "./Menu"
 
-// import { loadUser } from "../redux/userActions"
+import { loadUser } from "../redux/userActions"
 import { signOut, useSession, signIn } from "next-auth/client"
 import {
   AppBar,
@@ -40,20 +40,23 @@ const Header = () => {
 
   const [session] = useSession()
 
-  console.log(session)
+  // console.log(session)
 
   const { user, loading } = useSelector((state) => state.profile)
 
+  // console.log(user)
+
+  if (session) {
+    const { user } = session
+    console.log(user)
+  }
+
   useEffect(() => {
     if (!user) {
-      // dispatch(loadUser())
+      dispatch(loadUser())
     }
-  }, [dispatch, user])
+  }, [])
 
-  const handleSignin = (e) => {
-    e.preventDefault()
-    signIn()
-  }
   const handleSignout = (e) => {
     e.preventDefault()
     signOut()
@@ -129,18 +132,6 @@ const Header = () => {
           </Toolbar>
         </AppBar>
       </div>
-      {/* <div className="header">
-        {session && (
-          <a href="#" onClick={handleSignout} className="btn-signin">
-            Sign out
-          </a>
-        )}
-        {!session && (
-          <a href="#" onClick={handleSignin} className="btn-signin">
-            Sign in
-          </a>
-        )}
-      </div> */}
     </div>
   )
 }

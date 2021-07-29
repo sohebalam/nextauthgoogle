@@ -13,7 +13,7 @@ import { makeStyles } from "@material-ui/core/styles"
 import Container from "@material-ui/core/Container"
 import { useDispatch, useSelector } from "react-redux"
 import { useRouter } from "next/router"
-import { clearErrors, userRegister } from "../../redux/userActions"
+import { userRegister } from "../../redux/userActions"
 import { CircularProgress } from "@material-ui/core"
 import { Alert } from "@material-ui/lab"
 import { getSession } from "next-auth/client"
@@ -38,11 +38,11 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const Register = () => {
-  const [user, setUser] = useState({
-    name: "",
-    email: "",
-    password: "",
-  })
+  // const [user, setUser] = useState({
+  //   name: "",
+  //   email: "",
+  //   password: "",
+  // })
   const router = useRouter()
   const dispatch = useDispatch()
   const [userError, setUserError] = useState("")
@@ -61,14 +61,18 @@ const Register = () => {
     }
     if (error) {
       setUserError(error)
-      dispatch(clearErrors())
+
+      // setTimeout
+      // dispatch(clearErrors())
     }
   }, [dispatch, success, error])
 
   const submitHandler = async (e) => {
     e.preventDefault()
     const userData = {
+      name,
       email,
+      password,
     }
     // console.log(userData)
     // return
@@ -89,6 +93,7 @@ const Register = () => {
         </Typography>
         {loading && <CircularProgress />}
         {message && <Alert severity="success">{message}</Alert>}
+        {error && <Alert severity="error">{error}</Alert>}
         <form className={classes.form} noValidate onSubmit={submitHandler}>
           <Grid container spacing={2}>
             <Grid item xs={12}>

@@ -29,8 +29,8 @@ export const registerReducer = (
       return { loading: false, success: true, message: action.payload.message }
     case REGISTER_USER_FAIL:
       return { loading: false, error: action.payload }
-    case CLEAR_ERRORS:
-      return { ...state, error: null }
+    // case CLEAR_ERRORS:
+    //   return { ...state, error: null }
     default:
       return state
   }

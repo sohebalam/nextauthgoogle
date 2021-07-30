@@ -68,20 +68,29 @@ export const updateProfile = async (req, res) => {
       user.name = req.body.name
 
       if (req.body.password) {
+        if (req.body.password < 6) {
+          return res
+            .status(400)
+            .json({ message: "password must be at least 6 characters" })
+        }
+
         const salt = await bcrypt.genSalt(12)
         user.password = await bcrypt.hash(req.body.password, salt)
       }
     }
-    // if (user.email) {
-    //   const { email } = user
-    //   const userExists = await User.findOne({ email })
+    if (user.email) {
+      const { email } = user
+      const userExists = await User.findOne({ email })
 
-    //   if (userExists) {
-    //     return res.status(400).json({ message: "email aleady exists" })
-    //   }
-    // } else {
-    //   user.email = req.body.email
-    // }
+      if (userExists) {
+        return res.status(400).json({ message: "email already exists" })
+      }
+    } else {
+      if (!validator.isEmail) {
+        return res.status(400).json({ message: "Not a valid email" })
+      }
+      user.email = req.body.email
+    }
     await user.save()
     res.status(200).json({
       success: true,
@@ -89,10 +98,29 @@ export const updateProfile = async (req, res) => {
   } else {
     const user = await User.findById(req.user._id)
     if (user) {
-      ;(user.name = req.body.name), (user.email = req.body.email)
+      user.name = req.body.name
       if (req.body.password) {
+        if (req.body.password < 6) {
+          return res
+            .status(400)
+            .json({ message: "password must be at least 6 characters" })
+        }
+        const salt = await bcrypt.genSalt(12)
         user.password = await bcrypt.hash(req.body.password, salt)
       }
+    }
+    if (user.email) {
+      const { email } = user
+      const userExists = await User.findOne({ email })
+
+      if (userExists) {
+        return res.status(400).json({ message: "email already exists" })
+      }
+    } else {
+      if (!validator.isEmail) {
+        return res.status(400).json({ message: "Not a valid email" })
+      }
+      user.email = req.body.email
     }
     await user.save()
     res.status(200).json({

@@ -68,7 +68,7 @@ const Register = () => {
       // setTimeout
       // dispatch(clearErrors())
     }
-  }, [dispatch, success, error])
+  }, [dispatch, success, error, message])
 
   const submitHandler = async (e) => {
     e.preventDefault()
@@ -118,9 +118,11 @@ const Register = () => {
         </Typography>
         {loading && <CircularProgress />}
         {message && <Alert severity="success">{message}</Alert>}
-        {(error || userError) && (
-          <Alert severity="error">{error || userError}</Alert>
-        )}
+        {message
+          ? ""
+          : (error || userError) && (
+              <Alert severity="error">{error || userError}</Alert>
+            )}
         <form className={classes.form} noValidate onSubmit={submitHandler}>
           <Grid container spacing={2}>
             <Grid item xs={12}>

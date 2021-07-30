@@ -72,6 +72,12 @@ const Reset = () => {
       return
     }
 
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .json({ message: "Password must be at least 6 characters" })
+    }
+
     const userData = {
       password,
       conPassword,
@@ -95,9 +101,11 @@ const Reset = () => {
         </Typography>
         {loading && <CircularProgress />}
         {message && <Alert severity="success">{message}</Alert>}
-        {(error || userError) && (
-          <Alert severity="error">{error || userError}</Alert>
-        )}
+        {message
+          ? ""
+          : (error || userError) && (
+              <Alert severity="error">{error || userError}</Alert>
+            )}
         <form className={classes.form} noValidate onSubmit={submitHandler}>
           <Grid container spacing={2}>
             <Grid item xs={12}>

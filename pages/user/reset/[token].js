@@ -45,7 +45,8 @@ const Reset = () => {
   const dispatch = useDispatch()
 
   const [password, setPassword] = useState("")
-
+  const [conPassword, setConPassword] = useState("")
+  const [userError, setUserError] = useState("")
   const resetPassword = useSelector((state) => state.resetPassword)
   const { loading, error, success, message } = resetPassword
 
@@ -65,8 +66,15 @@ const Reset = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault()
+
+    if (password !== conPassword) {
+      setUserError("Passwords do not match")
+      return
+    }
+
     const userData = {
       password,
+      conPassword,
     }
     // console.log(userData)
     // return
@@ -87,6 +95,9 @@ const Reset = () => {
         </Typography>
         {loading && <CircularProgress />}
         {message && <Alert severity="success">{message}</Alert>}
+        {(error || userError) && (
+          <Alert severity="error">{error || userError}</Alert>
+        )}
         <form className={classes.form} noValidate onSubmit={submitHandler}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -101,6 +112,20 @@ const Reset = () => {
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                name="conPassword"
+                label="Confirm Password"
+                type="password"
+                id="conPassword"
+                autoComplete="current-password"
+                value={conPassword}
+                onChange={(e) => setConPassword(e.target.value)}
               />
             </Grid>
           </Grid>

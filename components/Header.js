@@ -20,6 +20,7 @@ import {
 import { makeStyles } from "@material-ui/core/styles"
 // import { Alert } from "@material-ui/lab"
 import { useSelector, useDispatch } from "react-redux"
+import { useRouter } from "next/router"
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
 const Header = () => {
   const dispatch = useDispatch()
   const classes = useStyles()
-
+  const router = useRouter()
   const [session] = useSession()
 
   const profile = useSelector((state) => state.profile)
@@ -46,11 +47,12 @@ const Header = () => {
     if (!dbUser) {
       dispatch(loadUser())
     }
-  }, [])
+  }, [dbUser])
 
   const handleSignout = (e) => {
     e.preventDefault()
-    signOut()
+    signOut({ callbackUrl: `${window.location.origin}` })
+    // router.push("/user/login")
   }
 
   return (
@@ -71,7 +73,7 @@ const Header = () => {
               {dbUser ? (
                 <>
                   <div style={{ marginTop: "0.25rem" }}>
-                    <Link style={{ color: "white" }} href="/dbUser/profile">
+                    <Link style={{ color: "white" }} href="/user/profile">
                       <Button color="inherit" style={{ marginRight: "0.5rem" }}>
                         Profile
                       </Button>
@@ -105,13 +107,13 @@ const Header = () => {
                 </>
               ) : (
                 <>
-                  <Link href="/dbUser/register">
+                  <Link href="/user/register">
                     <Button color="inherit">
                       <AssignmentIcon style={{ marginRight: "0.25rem" }} />
                       Register
                     </Button>
                   </Link>
-                  <Link href="/dbUser/login">
+                  <Link href="/user/login">
                     <Button color="inherit">
                       <PersonIcon style={{ marginRight: "0.25rem" }} />
                       Login

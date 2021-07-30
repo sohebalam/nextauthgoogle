@@ -13,7 +13,7 @@ import { makeStyles } from "@material-ui/core/styles"
 import Container from "@material-ui/core/Container"
 import { useDispatch, useSelector } from "react-redux"
 import { useRouter } from "next/router"
-import { userRegister } from "../../redux/userActions"
+import { loadUser, userRegister } from "../../redux/userActions"
 import { CircularProgress } from "@material-ui/core"
 import { Alert } from "@material-ui/lab"
 import { getSession } from "next-auth/client"
@@ -50,6 +50,7 @@ const Register = () => {
   const [userError, setUserError] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [conPassword, setConPassword] = useState("")
   const [name, setName] = useState("")
 
   const register = useSelector((state) => state.register)
@@ -71,10 +72,32 @@ const Register = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault()
+    if (!name || !email || !password) {
+      setUserError("Please add all fields")
+      return
+    }
+
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .json({ message: "Password must be at least 6 characters" })
+    }
+
+    if (password !== conPassword) {
+      setUserError("Passwords do not match")
+      return
+    }
+
+    if (!validator.isEmail(email)) {
+      setUserError("Not a valid email")
+      return
+    }
+
     const userData = {
       name,
       email,
       password,
+      conPassword,
     }
     // console.log(userData)
     // return
@@ -95,7 +118,9 @@ const Register = () => {
         </Typography>
         {loading && <CircularProgress />}
         {message && <Alert severity="success">{message}</Alert>}
-        {error && <Alert severity="error">{error}</Alert>}
+        {(error || userError) && (
+          <Alert severity="error">{error || userError}</Alert>
+        )}
         <form className={classes.form} noValidate onSubmit={submitHandler}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -148,6 +173,20 @@ const Register = () => {
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                name="conPassword"
+                label="Confirm Password"
+                type="password"
+                id="conPassword"
+                autoComplete="current-password"
+                value={conPassword}
+                onChange={(e) => setConPassword(e.target.value)}
               />
             </Grid>
             <Grid item xs={12}>

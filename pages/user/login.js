@@ -18,8 +18,9 @@ import {
 } from "react-social-login-buttons"
 import TwitterIcon from "@material-ui/icons/Twitter"
 import { providers, signIn, getSession, useSession } from "next-auth/client"
-import { socialReg } from "../../redux/userActions"
+import { loadUser, socialReg } from "../../redux/userActions"
 import { useDispatch, useSelector } from "react-redux"
+import { useRouter } from "next/router"
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -41,13 +42,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const SignIn = ({ providers }) => {
+const SignIn = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch()
   const classes = useStyles()
+  const router = useRouter()
 
   const profile = useSelector((state) => state.profile)
 
@@ -61,12 +63,14 @@ const SignIn = ({ providers }) => {
       email,
       password,
     })
+    dispatch(loadUser())
+
     setLoading(false)
     if (res.error) {
       setError(res.error)
       setLoading(false)
     } else {
-      // window.location.href = "/"
+      router.push("/")
     }
   }
 
@@ -81,11 +85,11 @@ const SignIn = ({ providers }) => {
       email: user.email,
       password: null,
     }
-    // if (dbUser === null) {
-    if (user.id) {
-      dispatch(socialReg(userData))
-      console.log(userData)
-      // }
+    if (dbUser === null) {
+      if (user.id) {
+        dispatch(socialReg(userData))
+        console.log(userData)
+      }
     }
   }
 
@@ -200,22 +204,20 @@ const SignIn = ({ providers }) => {
   )
 }
 
-SignIn.getInitialProps = async (context) => {
-  const { req, res } = context
-  const session = await getSession({ req })
+export async function getServerSideProps(context) {
+  const session = await getSession({ req: context.req })
 
-  if (session && res && session.accessToken) {
-    res.writeHead(302, {
-      Location: "/",
-    })
-    res.end()
-    return
+  if (session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    }
   }
 
   return {
-    session: undefined,
-    providers: await providers(context),
-    // csrfToken: await csrfToken(context),
+    props: {},
   }
 }
 

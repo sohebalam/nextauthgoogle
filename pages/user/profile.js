@@ -18,10 +18,20 @@ import { CircularProgress } from "@material-ui/core"
 import { useDispatch, useSelector } from "react-redux"
 import { updateProfile, clearErrors } from "../../redux/userActions"
 import { UPDATE_PROFILE_RESET } from "../../redux/userTypes"
+import { getSession } from "next-auth/client"
+
+import { signOut } from "next-auth/client"
+import { Box } from "@material-ui/core"
 
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  profile: {
+    marginTop: theme.spacing(19),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -100,34 +110,40 @@ const Profile = () => {
       {loading ? (
         <CircularProgress />
       ) : (
-        <Container component="main" maxWidth="xs">
-          <CssBaseline />
-          <div className={classes.paper}>
-            <Avatar className={classes.avatar}>
-              <PersonIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5">
-              User Profile
-            </Typography>
-            {loading && <CircularProgress />}
-            {message && <Alert severity="success">{message}</Alert>}
-            <form className={classes.form} noValidate onSubmit={submitHandler}>
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <TextField
-                    autoComplete="name"
-                    name="name"
-                    variant="outlined"
-                    required
-                    fullWidth
-                    id="Name"
-                    label="Name"
-                    autoFocus
-                    value={name || ""}
-                    onChange={onChange}
-                  />
-                </Grid>
-                {/* <Grid item xs={12} sm={6}>
+        <Grid container>
+          <Grid item sm={6}>
+            <Container component="main" maxWidth="xs">
+              <CssBaseline />
+              <div className={classes.paper}>
+                <Avatar className={classes.avatar}>
+                  <PersonIcon />
+                </Avatar>
+                <Typography component="h1" variant="h5">
+                  Update Profile
+                </Typography>
+                {loading && <CircularProgress />}
+                {message && <Alert severity="success">{message}</Alert>}
+                <form
+                  className={classes.form}
+                  noValidate
+                  onSubmit={submitHandler}
+                >
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <TextField
+                        autoComplete="name"
+                        name="name"
+                        variant="outlined"
+                        required
+                        fullWidth
+                        id="Name"
+                        label="Name"
+                        autoFocus
+                        value={name || ""}
+                        onChange={onChange}
+                      />
+                    </Grid>
+                    {/* <Grid item xs={12} sm={6}>
               <TextField
                 variant="outlined"
                 required
@@ -137,65 +153,94 @@ const Profile = () => {
                 name="lastName"
                 autoComplete="lname"
               /> */}
-                {/* </Grid> */}
-                <Grid item xs={12}>
-                  <TextField
-                    variant="outlined"
-                    required
-                    fullWidth
-                    id="email"
-                    label="Email Address"
-                    name="email"
-                    autoComplete="email"
-                    value={email || ""}
-                    onChange={onChange}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    variant="outlined"
-                    required
-                    fullWidth
-                    name="password"
-                    label="Password"
-                    type="password"
-                    id="password"
-                    autoComplete="current-password"
-                    value={password || ""}
-                    onChange={onChange}
-                  />
-                </Grid>
-                <Grid item xs={12}>
+                    {/* </Grid> */}
+                    <Grid item xs={12}>
+                      <TextField
+                        variant="outlined"
+                        required
+                        fullWidth
+                        id="email"
+                        label="Email Address"
+                        name="email"
+                        autoComplete="email"
+                        value={email || ""}
+                        onChange={onChange}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        variant="outlined"
+                        required
+                        fullWidth
+                        name="password"
+                        label="Password"
+                        type="password"
+                        id="password"
+                        autoComplete="current-password"
+                        value={password || ""}
+                        onChange={onChange}
+                      />
+                    </Grid>
+                    {/* <Grid item xs={12}>
                   <FormControlLabel
                     control={
                       <Checkbox value="allowExtraEmails" color="primary" />
                     }
                     label="I want to receive inspiration, marketing promotions and updates via email."
                   />
-                </Grid>
-              </Grid>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
-              >
-                Update Profile
-              </Button>
-              <Grid container justifyContent="flex-end">
-                <Grid item>
-                  <Link href="/login" variant="body2">
-                    Already have an account? Sign in
-                  </Link>
-                </Grid>
-              </Grid>
-            </form>
-          </div>
-        </Container>
+                </Grid> */}
+                  </Grid>
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    className={classes.submit}
+                  >
+                    Update Profile
+                  </Button>
+                  <Grid container justifyContent="flex-end"></Grid>
+                </form>
+              </div>
+            </Container>
+          </Grid>
+          <Grid item sm={6}>
+            <Box styles={{ marginTop: "12" }}>
+              <Container component="main" maxWidth="xs">
+                <div className={classes.profile}>
+                  {dbUser && (
+                    <div>
+                      <p>Signed in as {dbUser.email}</p>
+                      <p>Name: {dbUser.name}</p>
+                      <img src={dbUser.image} alt={dbUser.name} />
+                    </div>
+                  )}
+                  {/* <SocialLogin /> */}
+                </div>
+              </Container>
+            </Box>
+          </Grid>
+        </Grid>
       )}
     </>
   )
+}
+
+export async function getServerSideProps(context) {
+  const session = await getSession({ req: context.req })
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    }
+  }
+
+  return {
+    props: {},
+  }
 }
 
 export default Profile

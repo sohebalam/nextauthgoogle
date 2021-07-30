@@ -10,19 +10,22 @@ import validator from "validator"
 export const registerUser = catchAsyncErrors(async (req, res) => {
   // console.log(req.body)
 
-  const { name, email, password } = req.body
+  const { name, email, password, conPassword } = req.body
 
   if (!name || !email || !password) {
-    return res.status(400).json({ message: "please fill in all fields" })
+    return res.status(400).json({ message: "Please fill in all fields" })
   }
 
+  if (password !== conPassword) {
+    return res.status(400).json({ message: "Passwords do not match" })
+  }
   if (password.length < 6) {
     return res
       .status(400)
-      .json({ message: "password must be at least 6 characters" })
+      .json({ message: "Password must be at least 6 characters" })
   }
 
-  if (!validator.isEmail) {
+  if (!validator.isEmail(email)) {
     return res.status(400).json({ message: "Not a valid email" })
   }
 
@@ -137,7 +140,7 @@ export const forgotPassword = async (req, res) => {
     const user = await User.findOne({ email })
 
     if (!user) {
-      return res.status(404).json({ message: "User doesn't exist" })
+      return res.status(404).json({ message: "email doesn't exist" })
     }
 
     // Reset Token Gen and add to database hashed (private) version of token
@@ -187,6 +190,12 @@ export const resetPassword = async (req, res) => {
   const { resetToken } = req.query
   // we can pass through params aswell
 
+  const { password, conPassword } = req.body
+
+  if (password !== conPassword) {
+    return res.status(400).json({ message: "Passwords do not match be" })
+  }
+
   if (resetToken) {
     // token = req.headers.authorization.split(" ")[1]
     const decoded = jwt.verify(resetToken, process.env.JWT_SECRET)
@@ -199,6 +208,11 @@ export const resetPassword = async (req, res) => {
     if (user) {
       const salt = await bcrypt.genSalt(10)
       if (req.body.password) {
+        if (req.body.password < 6) {
+          return res
+            .status(400)
+            .json({ message: "password must be at least 6 characters" })
+        }
         user.password = await bcrypt.hash(req.body.password, salt)
       }
       user.resetToken = undefined

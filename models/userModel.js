@@ -3,7 +3,12 @@ import mongoose from "mongoose"
 const userSchema = mongoose.Schema({
   socialId: {
     type: String,
-    unique: true,
+    required: false,
+    index: {
+      unique: true,
+      partialFilterExpression: { socialId: { $type: "string" } },
+    },
+    default: null,
   },
   name: {
     type: String,
@@ -18,6 +23,7 @@ const userSchema = mongoose.Schema({
       partialFilterExpression: { email: { $type: "string" } },
     },
     default: null,
+    lowercase: true,
   },
   password: {
     type: String,
